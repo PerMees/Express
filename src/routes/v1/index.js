@@ -1,10 +1,7 @@
 const express = require("express");
+const router = express.Router();
 const userRouter = require("./users.routes");
 
-// url: api/v1
-const rootRouter = express.Router();
+router.use("/users", userRouter);
 
-// Khai báo userRouter
-rootRouter.use("/users", userRouter);
-
-module.exports = rootRouter;
+module.exports = router;
