@@ -1,10 +1,17 @@
 const { Sequelize } = require("sequelize");
 const createUserModel = require("./users.model");
-
-const sequelize = new Sequelize("express", "root", "1234", {
-  host: "localhost",
-  dialect: "mysql",
-  port: 3307,
+const {
+  DATABASE,
+  USERNAME,
+  PASSWORD,
+  HOST,
+  DIALECT,
+  PORT,
+} = require("../config");
+const sequelize = new Sequelize(DATABASE, USERNAME, PASSWORD, {
+  host: HOST,
+  dialect: DIALECT,
+  port: PORT,
 });
 
 const User = createUserModel(sequelize);

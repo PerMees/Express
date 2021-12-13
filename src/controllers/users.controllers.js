@@ -1,9 +1,14 @@
 const { User } = require("../models");
+const { ReS, ReE } = require("../utils/response");
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
-    res.status(200).send(users);
+    const users = await User.findAll({
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+    ReS(res, users, 200);
   } catch (error) {
     throw error;
   }
@@ -11,11 +16,15 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!Number(id)) {
+      console.log(id);
+      return ReE(res, "User id is invalid", 400);
+    }
     const user = await User.findOne({ where: { id } });
     if (user) {
-      res.status(200).send(user);
+      ReS(res, user, 200);
     } else {
-      res.status(404).send("User not found");
+      ReE(res, "User not found", 404);
     }
   } catch (error) {
     throw error;
@@ -23,8 +32,12 @@ const getUserById = async (req, res) => {
 };
 const createUser = async (req, res) => {
   try {
+    const isUser = await User.findOne({ where: { email: req.body.email } });
+    if (isUser) {
+      ReE(res, "Email already exists", 400);
+    }
     const user = await User.create(req.body);
-    res.status(201).send(user);
+    ReS(res, user, 201);
   } catch (error) {
     throw error;
   }
@@ -36,9 +49,9 @@ const updateUser = async (req, res) => {
     const user = await User.findOne({ where: { id } });
     if (user) {
       await User.update(userUpdate, { where: { id } });
-      res.status(200).send("User " + id + " updated");
+      ReS(res, userUpdate, 200);
     } else {
-      res.status(404).send("User not found");
+      ReE(res, "User not found", 404);
     }
   } catch (error) {
     throw error;
@@ -47,12 +60,16 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!Number(id)) {
+      console.log(id);
+      return ReE(res, "User id is invalid", 400);
+    }
     const user = await User.findOne({ where: { id } });
     if (user) {
       await User.destroy({ where: { id } });
-      res.status(200).send("User " + id + " deleted");
+      ReS(res, "User deleted", 200);
     } else {
-      res.status(404).send("User not found");
+      ReE(res, "User not found", 404);
     }
   } catch (error) {
     throw error;
