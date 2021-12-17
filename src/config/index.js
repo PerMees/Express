@@ -6,7 +6,7 @@ const PASSWORD = process.env.PASSWORD;
 const HOST = process.env.HOST;
 const DIALECT = process.env.DIALECT;
 const PORT = process.env.PORT;
-
+const SECRET_KEY = process.env.SECRET_KEY;
 module.exports = {
   DATABASE,
   USERNAME,
@@ -14,4 +14,5 @@ module.exports = {
   HOST,
   DIALECT,
   PORT,
+  SECRET_KEY,
 };

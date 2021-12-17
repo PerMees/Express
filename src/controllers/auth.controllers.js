@@ -1,25 +1,21 @@
 const bcrypt = require("bcrypt");
 const { User } = require("../models");
+const generateToken = require("../utils/jwt");
+const { ReS, ReE } = require("../utils/response");
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({
-        message: "Invalid email or password",
-      });
+      return ReS(res, "Invalid email or password", 404);
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (isPasswordValid) {
       user.password = password;
-      return res.status(200).json({
-        message: "Login success",
-        id: user.id, // It will change to send a token to user
-      });
+      const token = generateToken(user);
+      return ReS(res, token, 200);
     }
-    return res.status(401).json({
-      message: "Invalid email or password",
-    });
+    return ReE(res, "Invalid email or password", 401);
   } catch (error) {
     throw error;
   }
@@ -43,4 +39,8 @@ const register = async (req, res) => {
     throw error;
   }
 };
-module.exports = { login, register };
+const profile = (req, res) => {
+  const user = req.user;
+  ReS(res, user, 200);
+};
+module.exports = { login, register, profile };

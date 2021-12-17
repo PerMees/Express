@@ -39,6 +39,9 @@ const createUser = async (req, res) => {
     const user = await User.create(req.body);
     ReS(res, user, 201);
   } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      ReE(res, error.errors, 400);
+    }
     throw error;
   }
 };

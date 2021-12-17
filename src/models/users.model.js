@@ -18,7 +18,9 @@ const createUserModel = (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          isEmail: true,
+          isEmail: {
+            msg: "Email is invalid",
+          },
         },
       },
       password: {
@@ -29,6 +31,10 @@ const createUserModel = (sequelize) => {
           const hashedPassword = bcrypt.hashSync(value, 12);
           this.setDataValue("password", hashedPassword);
         },
+      },
+      role: {
+        type: DataTypes.STRING,
+        defaultValue: "User",
       },
     },
     {

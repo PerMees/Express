@@ -9,13 +9,17 @@ const ReS = (res, data, code) => {
 
 const ReE = (res, err, code) => {
   let result = { success: false };
-  if (typeof err === "object" && err.message) {
-    err = err.message;
-  }
+  let errors = [];
   if (code) {
     result.statusCode = code;
   }
-  res.status(code).json({ error: err, ...result });
+  if (Array.isArray(err) && err.length > 0) {
+    errors = err.map((e) => e.message);
+  } else if (typeof err === "object" && err.message) {
+    errors = [err.message];
+  } else errors = [err];
+
+  res.status(code).json({ error: errors, ...result });
 };
 
 module.exports = { ReS, ReE };
